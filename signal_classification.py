@@ -1,5 +1,6 @@
 # -----------------------------
-# Signal Classification using ML (With Feature Extraction + Sawtooth)
+# Signal Classification using ML
+# With Feature Extraction + Sawtooth + Noisy Signals
 # -----------------------------
 
 import numpy as np
@@ -9,16 +10,17 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-# 🔹 Import feature extractor
+# Import feature extractor
 from feature_utils import extract_features_from_array
 
 
-# Step 1: Generate signals (Sine + Square + Sawtooth)
+# Step 1: Generate multiple types of signals
 def generate_signals(n_samples=1000, n_points=100):
     X = []
     y = []
     for _ in range(n_samples):
-        signal_type = np.random.choice(['sine', 'square', 'sawtooth'])  # 🔥 NEW: sawtooth added
+        # 🔹 Added "noisy" type
+        signal_type = np.random.choice(['sine', 'square', 'sawtooth', 'noisy'])
         t = np.linspace(0, 1, n_points)
 
         if signal_type == 'sine':
@@ -27,8 +29,13 @@ def generate_signals(n_samples=1000, n_points=100):
         elif signal_type == 'square':
             signal = np.sign(np.sin(2 * np.pi * 5 * t))
 
-        elif signal_type == 'sawtooth':   # 🔥 NEW BLOCK
+        elif signal_type == 'sawtooth':
             signal = 2 * (t - np.floor(t + 0.5))
+
+        elif signal_type == 'noisy':   # 🔥 NEW: noisy signal
+            base = np.sin(2 * np.pi * 5 * t)
+            noise_level = np.random.uniform(0.05, 0.5)
+            signal = base + noise_level * np.random.randn(len(t))
 
         X.append(signal)
         y.append(signal_type)
@@ -55,12 +62,12 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = RandomForestClassifier()
 model.fit(X_train, y_train)
 
-# Step 4: Test
+# Step 4: Test model
 y_pred = model.predict(X_test)
 acc = accuracy_score(y_test, y_pred)
-print(f"\n✅ Model Accuracy (with Sine + Square + Sawtooth): {acc*100:.2f}%\n")
+print(f"\n✅ Model Accuracy (with Sine, Square, Sawtooth & Noisy): {acc*100:.2f}%\n")
 
-# Step 5: Show graph
+# Step 5: Visualize one random test signal
 index = np.random.randint(0, len(X_test))
 actual_index = list(X_test.index)[index]
 actual_signal = X_raw[actual_index]
@@ -71,7 +78,7 @@ plt.xlabel("Time")
 plt.ylabel("Amplitude")
 plt.show()
 
-# Step 6: Print extracted features
+# Step 6: Print extracted features for that sample
 print("\n📌 Extracted Features for this test signal:")
 feats = extract_features_from_array(actual_signal)
 for k, v in feats.items():
