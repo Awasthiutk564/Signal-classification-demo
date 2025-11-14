@@ -1,10 +1,13 @@
-# -----------------------------
-# Signal Classification (Day 5)
-# - Feature extraction (from feature_utils)
-# - Sine / Square / Sawtooth / Noisy
-# - Plot multiple random test signals in one figure
-# - Save a sample CSV of raw signals to data/signals_sample.csv
-# -----------------------------
+# -----------------------------------------------------------
+# DAY 6 — Signal Classification Project
+# Features:
+# - Sine / Square / Sawtooth / Noisy signals
+# - Time + Frequency domain features
+# - RandomForest model
+# - Accuracy + Classification Report + Confusion Matrix (Heatmap)
+# - Multi-signal plotting
+# - CSV Export
+# -----------------------------------------------------------
 
 import os
 import numpy as np
@@ -12,14 +15,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import seaborn as sns
 
 from feature_utils import extract_features_from_array
 
-# ---------- Signal generator ----------
+# -----------------------------------------------------------
+# Signal Generator
+# -----------------------------------------------------------
 def generate_signals(n_samples=1000, n_points=100):
     X = []
     y = []
+
     for _ in range(n_samples):
         signal_type = np.random.choice(['sine', 'square', 'sawtooth', 'noisy'])
         t = np.linspace(0, 1, n_points)
@@ -43,68 +50,96 @@ def generate_signals(n_samples=1000, n_points=100):
 
     return np.array(X), np.array(y)
 
-# ---------- Save raw sample CSV ----------
+# -----------------------------------------------------------
+# Save RAW Signals to CSV
+# -----------------------------------------------------------
 def save_sample_csv(X_raw, y, out_csv="data/signals_sample.csv", n_save=50):
-    """
-    Save n_save rows (raw samples) to CSV with columns: label, s0, s1, ..., sN
-    """
     os.makedirs(os.path.dirname(out_csv), exist_ok=True)
+
     rows = []
     n_save = min(n_save, len(X_raw))
+
     for i in range(n_save):
         row = {"label": y[i]}
         for j, val in enumerate(X_raw[i]):
             row[f"s{j}"] = float(val)
         rows.append(row)
+
     df = pd.DataFrame(rows)
     df.to_csv(out_csv, index=False)
-    print(f"Saved sample CSV to {out_csv} (rows: {len(df)})")
+    print(f"📁 Saved sample CSV to: {out_csv}")
 
-# ---------- Main flow ----------
+# -----------------------------------------------------------
+# MAIN
+# -----------------------------------------------------------
 def main():
-    # 1) Generate
+
+    # 1) Generate Dataset
     X_raw, y = generate_signals(n_samples=1000, n_points=100)
 
-    # 2) Extract features and train on features (as before)
+    # 2) Feature Extraction
     feature_list = [extract_features_from_array(sig) for sig in X_raw]
     X = pd.DataFrame(feature_list)
 
+    # 3) Train-Test Split
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
 
+    # 4) Train Model
     model = RandomForestClassifier()
     model.fit(X_train, y_train)
 
+    # 5) Predict
     y_pred = model.predict(X_test)
     acc = accuracy_score(y_test, y_pred)
-    print(f"\n✅ Model Accuracy (Day 5): {acc*100:.2f}%\n")
+    print(f"\n✅ Model Accuracy (Day 6): {acc*100:.2f}%\n")
 
-    # 3) Save a sample CSV of raw signals (first 50)
-    save_sample_csv(X_raw, y, out_csv="data/signals_sample.csv", n_save=50)
+    # 6) Classification Report
+    print("📄 Classification Report:")
+    print(classification_report(y_test, y_pred))
 
-    # 4) Plot multiple random test signals in one figure
-    #    We'll pick 6 random test indices and show them tiled
+    # 7) Confusion Matrix + Heatmap
+    print("🧾 Confusion Matrix:")
+    cm = confusion_matrix(y_test, y_pred, labels=model.classes_)
+    print(cm)
+
+    plt.figure(figsize=(6,4))
+    sns.heatmap(cm, annot=True, fmt='d',
+                xticklabels=model.classes_,
+                yticklabels=model.classes_,
+                cmap="Blues")
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.title("Confusion Matrix Heatmap (Day 6)")
+    plt.show()
+
+    # 8) Multi-signal plotting (6 random signals)
     sample_indices = np.random.choice(len(X_test), size=6, replace=False)
-    # map X_test indices back to raw array indices
     raw_indices = [list(X_test.index)[i] for i in sample_indices]
+
     fig, axs = plt.subplots(3, 2, figsize=(10, 6))
     axs = axs.flatten()
-    for ax_i, ridx, si in zip(axs, raw_indices, sample_indices):
+
+    for ax, ridx, si in zip(axs, raw_indices, sample_indices):
         sig = X_raw[ridx]
-        ax_i.plot(sig)
-        ax_i.set_title(f"Actual: {y[si]} | Predicted: {y_pred[si]}")
-        ax_i.set_xlabel("Sample #")
-        ax_i.set_ylabel("Amp")
+        ax.plot(sig)
+        ax.set_title(f"Actual: {y[si]} | Predicted: {y_pred[si]}")
+        ax.set_xlabel("Sample #")
+        ax.set_ylabel("Amp")
+
     plt.tight_layout()
     plt.show()
 
-    # 5) Print features for one of the plotted signals
-    chosen = raw_indices[0]
-    feats = extract_features_from_array(X_raw[chosen])
-    print("\n📌 Extracted features for one sample plotted:")
+    # 9) Save first 50 samples as CSV
+    save_sample_csv(X_raw, y, "data/signals_sample.csv", n_save=50)
+
+    # 10) Print features of first plotted signal
+    print("\n📌 Extracted Features for 1 sample:")
+    feats = extract_features_from_array(X_raw[raw_indices[0]])
     for k, v in feats.items():
         print(f"{k:25s}: {v}")
 
+# -----------------------------------------------------------
 if __name__ == "__main__":
     main()
