@@ -19,13 +19,10 @@ def generate_signals(n_samples=1000, n_points=100):
 
         if signal_type == 'sine':
             signal = np.sin(2 * np.pi * 5 * t)
-
         elif signal_type == 'square':
             signal = np.sign(np.sin(2 * np.pi * 5 * t))
-
         elif signal_type == 'sawtooth':
             signal = 2 * (t - np.floor(t + 0.5))
-
         elif signal_type == 'noisy':
             base = np.sin(2 * np.pi * 5 * t)
             noise_level = np.random.uniform(0.05, 0.5)
@@ -55,7 +52,6 @@ def save_sample_csv(X_raw, y, out_csv="data/signals_sample.csv", n_save=50):
 
 def plot_fft(signal, save_path="fft_spectrum.png"):
     n = len(signal)
-    t = np.linspace(0, 1, n)
     xf = rfftfreq(n, 1/n)
     yf = np.abs(rfft(signal))
 
@@ -70,10 +66,26 @@ def plot_fft(signal, save_path="fft_spectrum.png"):
     plt.show()
 
 
+def plot_feature_importance(model, feature_names, save_path="feature_importance.png"):
+    importance = model.feature_importances_
+    sorted_idx = np.argsort(importance)
+
+    plt.figure(figsize=(8, 5))
+    plt.barh(np.array(feature_names)[sorted_idx], importance[sorted_idx], color='skyblue')
+    plt.xlabel("Importance")
+    plt.title("Feature Importance (Model Explainability)")
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(save_path)
+    print(f"Saved feature importance plot as {save_path}")
+    plt.show()
+
+
 def main():
     X_raw, y = generate_signals(n_samples=1000, n_points=100)
 
     feature_list = [extract_features_from_array(sig) for sig in X_raw]
+    feature_names = list(feature_list[0].keys())
     X = pd.DataFrame(feature_list)
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -106,10 +118,10 @@ def main():
     print("Saved confusion matrix heatmap as confusion_matrix.png")
     plt.show()
 
+    # Multi-signal plots
     sample_indices = np.random.choice(len(X_test), size=6, replace=False)
     raw_indices = [list(X_test.index)[i] for i in sample_indices]
 
-    # Multi-signal plot
     fig, axs = plt.subplots(3, 2, figsize=(10, 6))
     axs = axs.flatten()
     for ax, ridx, si in zip(axs, raw_indices, sample_indices):
@@ -118,21 +130,20 @@ def main():
         ax.set_title(f"Actual: {y[si]} | Predicted: {y_pred[si]}")
         ax.set_xlabel("Sample #")
         ax.set_ylabel("Amplitude")
-
     plt.tight_layout()
     plt.show()
 
     save_sample_csv(X_raw, y, "data/signals_sample.csv", n_save=50)
 
-    # FFT on first plotted signal
-    print("\nExtracted Features:")
     first_sig = X_raw[raw_indices[0]]
+    print("\nExtracted Features:")
     feats = extract_features_from_array(first_sig)
     for k, v in feats.items():
         print(f"{k:25s}: {v}")
 
-    # Plot FFT
     plot_fft(first_sig, "fft_spectrum.png")
+
+    plot_feature_importance(model, feature_names, "feature_importance.png")
 
 
 if __name__ == "__main__":
