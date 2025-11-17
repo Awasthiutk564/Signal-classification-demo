@@ -1,34 +1,107 @@
-# 📶 Signal Classification using Machine Learning  
-This project classifies signals like **Sine** and **Square** waves using **Machine Learning**,  
-and now includes a **Feature Extraction module (Time + Frequency domain)** for smarter predictions.
+# ⚡ Signal Classification using Machine Learning + DSP + Streamlit
+
+A complete end-to-end project that classifies signals  
+(**Sine, Square, Sawtooth, Noisy**) using Machine Learning and Signal Processing.  
+It also includes a fully interactive **Streamlit Web App**.
 
 ---
 
-## 🧠 What This Project Does
-- Generates synthetic signals (sine, square)
-- Extracts meaningful features:
-  - Mean, Standard Deviation  
-  - Min, Max  
-  - RMS (Root Mean Square)  
-  - FFT Energy  
-  - Frequency Energy Bands  
-- Trains a **Random Forest Classifier**
-- Shows model accuracy + graph + extracted feature values
+## 🚀 Features
+
+### ✔ Machine Learning  
+- Random Forest Classifier  
+- Feature extraction (mean, std, kurtosis, skewness, peaks, freq-domain features)  
+- Accuracy score  
+- Confusion matrix heatmap  
+- Classification report  
+- Feature importance (Explainability)  
+- Saves graphs as PNG (FFT, Confusion Matrix, Feature Importance)
+
+### ✔ Signal Processing (DSP)
+- Time-domain signal generation  
+- Frequency spectrum using FFT  
+- Noisy signal simulation  
+- Multiple signal previews  
+- Ability to generate and analyze custom signals  
+
+### ✔ Streamlit Web App
+- Live signal generation using sliders  
+- Real-time ML prediction  
+- FFT visualization  
+- Feature importance visualization  
+- Multi-signal comparison grid  
+- Upload your own CSV signal and get prediction  
+- Download generated signal as CSV  
 
 ---
 
-## 📂 Project Files
-| File | Description |
-|------|-------------|
-| `signal_classification.py` | Main ML script (training + testing + plotting + features) |
-| `feature_utils.py` | Time & frequency domain feature extraction |
-| `app.py` | (Optional) Streamlit web app for UI |
-| `signal_app_screenshot.png` | Output screenshot |
-| `README.md` | Documentation |
+## 📂 Project Structure
+
+signal_classification_project/
+│
+├── app.py # Streamlit Dashboard
+├── signal_classification.py # ML + DSP training/plots
+├── feature_utils.py # Feature extraction functions
+│
+├── data/
+│ └── signals_sample.csv # Generated sample dataset
+│
+├── confusion_matrix.png
+├── fft_spectrum.png
+├── feature_importance.png
+│
+└── README.md
 
 ---
 
-## 🚀 How to Run
-1. Install required libraries:
-```bash
-pip install numpy pandas scikit-learn matplotlib scipy
+## ▶️ Run ML Script
+
+python signal_classification.py
+
+This will:
+- Train the model  
+- Display confusion matrix  
+- Show multi-signal plots  
+- Plot FFT  
+- Show feature importance  
+- Save CSV + PNG files  
+
+---
+
+## 🌐 Run Streamlit Web App
+
+python -m streamlit run app.py
+
+Then open:
+
+http://localhost:8501/
+
+---
+
+## 📤 Upload Format (For Custom Signal Prediction)
+
+Your CSV must look like:
+
+time,amplitude
+0.00,0.12
+0.01,0.14
+0.02,0.20
+
+---
+
+## 💡 Why This Project Is Hackathon-Ready
+- ML + DSP + Web App combined  
+- Electronics + CS crossover  
+- Professional visualizations  
+- Clean code  
+- End-to-end pipeline  
+- Great for resume, GitHub, and demo  
+
+---
+
+## 👤 Author  
+**Utkarsh Awasthi**
+
+---
+
+## ⭐ If you like this project, star the repository!
