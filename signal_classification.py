@@ -2,6 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.fft import rfft, rfftfreq
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
@@ -52,6 +53,23 @@ def save_sample_csv(X_raw, y, out_csv="data/signals_sample.csv", n_save=50):
     print(f"Saved sample CSV to {out_csv}")
 
 
+def plot_fft(signal, save_path="fft_spectrum.png"):
+    n = len(signal)
+    t = np.linspace(0, 1, n)
+    xf = rfftfreq(n, 1/n)
+    yf = np.abs(rfft(signal))
+
+    plt.figure(figsize=(7, 4))
+    plt.plot(xf, yf, color="orange")
+    plt.title("Frequency Spectrum (FFT)")
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Amplitude")
+    plt.grid(alpha=0.3)
+    plt.savefig(save_path)
+    print(f"Saved FFT spectrum plot as {save_path}")
+    plt.show()
+
+
 def main():
     X_raw, y = generate_signals(n_samples=1000, n_points=100)
 
@@ -84,15 +102,14 @@ def main():
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.title("Confusion Matrix Heatmap")
-
     plt.savefig("confusion_matrix.png")
     print("Saved confusion matrix heatmap as confusion_matrix.png")
-
     plt.show()
 
     sample_indices = np.random.choice(len(X_test), size=6, replace=False)
     raw_indices = [list(X_test.index)[i] for i in sample_indices]
 
+    # Multi-signal plot
     fig, axs = plt.subplots(3, 2, figsize=(10, 6))
     axs = axs.flatten()
     for ax, ridx, si in zip(axs, raw_indices, sample_indices):
@@ -107,10 +124,15 @@ def main():
 
     save_sample_csv(X_raw, y, "data/signals_sample.csv", n_save=50)
 
-    feats = extract_features_from_array(X_raw[raw_indices[0]])
+    # FFT on first plotted signal
     print("\nExtracted Features:")
+    first_sig = X_raw[raw_indices[0]]
+    feats = extract_features_from_array(first_sig)
     for k, v in feats.items():
         print(f"{k:25s}: {v}")
+
+    # Plot FFT
+    plot_fft(first_sig, "fft_spectrum.png")
 
 
 if __name__ == "__main__":
