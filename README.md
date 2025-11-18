@@ -133,6 +133,27 @@ Your app gets a public URL instantly.
 - Best for hackathons & resume  
 
 ---
+---
+
+## 📸 Architecture Diagram
+Below is the complete architecture flow of the system:
+
+![Architecture Diagram](architecture_diagram.png)
+
+---
+
+## 🎞 Demo GIF (Live Signal Animation)
+
+![Signal Demo](signal_demo.gif)
+
+---
+
+## 📄 Project Report (PDF)
+You can download the full project documentation here:
+
+👉 **[Download Report PDF](Signal_Classification_Report.pdf)**
+
+---
 
 ## 👤 Author  
 **Utkarsh Awasthi**
