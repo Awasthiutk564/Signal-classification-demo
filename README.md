@@ -161,3 +161,10 @@ You can download the full project documentation here:
 ---
 
 ## ⭐ If this project helped you, please ⭐ star the repository!
+---
+
+### 🔄 Update (Continuous Improvement)
+Added a small enhancement note to keep the project evolving.  
+More advanced features and UI improvements will be added step-by-step.  
+
+Stay tuned for upcoming updates!
