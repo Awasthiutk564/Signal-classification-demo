@@ -168,3 +168,8 @@ Added a small enhancement note to keep the project evolving.
 More advanced features and UI improvements will be added step-by-step.  
 
 Stay tuned for upcoming updates!
+ ---
+
+### 🔧 Small Update
+Improved project documentation formatting and preparing for next enhancement phase.
+More updates coming soon.
