@@ -174,5 +174,4 @@ Stay tuned for upcoming updates!
 Improved project documentation formatting and preparing for next enhancement phase.
 More updates coming soon.
  Still if and with that I mean there is , need for any updates do let me know about that so that we can work on it. Linkedin id and Github repo is open for all of you. This project can be considered under simulation work as it is required to be connected with hardwares in future...
- Thank you so much guys for seeing the project and helping me out to understand the valuables.
- 
+ Thank you guys..
