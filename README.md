@@ -474,3 +474,4 @@ scipy
 seaborn
 streamlit
 
+Thanks for watching out my Repo. Hope you like it and you will fork it.
